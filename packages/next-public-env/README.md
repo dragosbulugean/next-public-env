@@ -158,9 +158,9 @@ opt-out of the static shell.
 connection()` to opt-out of the static shell and returns your environment
 variables.
 
-**Important:** Components using `getPublicEnvAsync()` (or any runtime API)
-should be wrapped in a `<Suspense>` boundary to allow the rest of the page to be
-prerendered.
+> **Important:** Components using `getPublicEnvAsync()` (or any runtime API)
+> should be wrapped in a `<Suspense>` boundary to allow the rest of the page to be
+> prerendered.
 
 ```tsx
 import { Suspense } from 'react';

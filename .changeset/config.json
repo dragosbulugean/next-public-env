@@ -10,5 +10,11 @@
   "access": "public",
   "baseBranch": "master",
   "updateInternalDependencies": "patch",
-  "ignore": ["next-14", "next-15", "next-16"]
+  "ignore": [
+    "next-14",
+    "next-15",
+    "next-16",
+    "next-16-standalone",
+    "next-16-cache-components"
+  ]
 }
