@@ -2,7 +2,8 @@ import { z } from 'zod/v4';
 import * as z4 from 'zod/v4/core';
 import { FlushConfig } from './FlushConfig';
 import { PHASE_PRODUCTION_BUILD } from 'next/constants';
-import { unstable_noStore as noStore } from 'next/cache';
+import { Suspense } from 'react';
+import { optOutOfStatic } from './optOutOfStatic';
 
 declare global {
   interface Window {
@@ -22,6 +23,14 @@ function formatZodError(error: ZodError): string {
     return `- Invalid variable [${variable}]: ${issue.message}`;
   });
   return `❌ Invalid environment variables found:\n${issues.join('\n')}`;
+}
+
+function assertServer() {
+  if (typeof window !== 'undefined') {
+    throw new Error(
+      "This wasn't supposed to happen. This file should only be resolved on the server.",
+    );
+  }
 }
 
 type Options<Shape extends z4.$ZodShape> = {
@@ -68,7 +77,7 @@ type Options<Shape extends z4.$ZodShape> = {
   dynamicRendering?: 'auto' | 'manual';
 };
 
-type PublicEnvType = (props: { nonce?: string }) => React.ReactElement;
+type PublicEnvType = (props: { nonce?: string }) => Promise<React.ReactElement>;
 
 export function createPublicEnv<
   Shape extends z4.$ZodShape,
@@ -78,6 +87,7 @@ export function createPublicEnv<
   options: Options<Shape> & { schema: SchemaShapeFactory<Shape> },
 ): {
   getPublicEnv: () => z4.infer<z4.$ZodObject<Shape>>;
+  getPublicEnvAsync: () => Promise<z4.infer<z4.$ZodObject<Shape>>>;
   PublicEnv: PublicEnvType;
 };
 export function createPublicEnv<T extends Record<string, any>>(
@@ -85,6 +95,7 @@ export function createPublicEnv<T extends Record<string, any>>(
   options?: Omit<Options<never>, 'schema'>,
 ): {
   getPublicEnv: () => T;
+  getPublicEnvAsync: () => Promise<T>;
   PublicEnv: PublicEnvType;
 };
 export function createPublicEnv(values: any, options?: Options<z4.$ZodShape>) {
@@ -111,20 +122,40 @@ export function createPublicEnv(values: any, options?: Options<z4.$ZodShape>) {
 
   const dynamicRendering = options?.dynamicRendering ?? 'auto';
 
+  const isCacheComponentsEnabled =
+    process.env.__NEXT_CACHE_COMPONENTS === 'true' ||
+    //@ts-expect-error
+    process.env.__NEXT_CACHE_COMPONENTS === true;
+
+  const PublicEnvInternal = async ({ nonce }: { nonce?: string }) => {
+    if (dynamicRendering === 'auto') {
+      await optOutOfStatic(isCacheComponentsEnabled);
+    }
+
+    return <FlushConfig config={stringifiedConfig} nonce={nonce} />;
+  };
+
   return {
     /**
      * @returns The parsed and validated environment variables.
      */
     getPublicEnv() {
-      if (typeof window !== 'undefined') {
-        throw new Error(
-          "This wasn't supposed to happen. This file should only be resolved on the server.",
-        );
-      }
+      assertServer();
 
-      if (dynamicRendering === 'auto') {
-        noStore();
-      }
+      optOutOfStatic();
+
+      return config;
+    },
+    /**
+     * @returns The parsed and validated environment variables.
+     *
+     * This function calls `await connection()` to opt-out of Next.js' static
+     * rendering for the component when `cacheComponents` is enabled.
+     */
+    async getPublicEnvAsync() {
+      assertServer();
+
+      await optOutOfStatic(true);
 
       return config;
     },
@@ -132,12 +163,16 @@ export function createPublicEnv(values: any, options?: Options<z4.$ZodShape>) {
      * A React component that serializes and flushes environment variables to
      * the client.
      */
-    PublicEnv({ nonce }: { nonce?: string }) {
-      if (dynamicRendering === 'auto') {
-        noStore();
+    async PublicEnv({ nonce }: { nonce?: string }) {
+      if (isCacheComponentsEnabled) {
+        return (
+          <Suspense fallback={null}>
+            <PublicEnvInternal nonce={nonce} />
+          </Suspense>
+        );
       }
 
-      return <FlushConfig config={stringifiedConfig} nonce={nonce} />;
+      return <PublicEnvInternal nonce={nonce} />;
     },
   };
 }

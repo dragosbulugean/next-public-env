@@ -1,4 +1,3 @@
-'use client';
 import { PHASE_PRODUCTION_BUILD } from 'next/constants';
 
 export default function ErrorTest() {

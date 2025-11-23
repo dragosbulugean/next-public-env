@@ -2,9 +2,14 @@ import { describe, it, expect, vi, beforeEach, afterEach, Mock } from 'vitest';
 import { createPublicEnv } from './';
 import { render } from '@testing-library/react';
 import * as nextNavigation from 'next/navigation';
+import { optOutOfStatic } from './optOutOfStatic';
 
 vi.mock('next/navigation', () => ({
   useServerInsertedHTML: vi.fn(),
+}));
+
+vi.mock('./optOutOfStatic', () => ({
+  optOutOfStatic: vi.fn(),
 }));
 
 describe('getPublicEnv', () => {
@@ -128,6 +133,43 @@ describe('getPublicEnv', () => {
   });
 });
 
+describe('getPublicEnvAsync', () => {
+  const originalWindow = global.window;
+
+  beforeEach(() => {
+    // @ts-ignore
+    delete global.window;
+    vi.clearAllMocks();
+  });
+
+  afterEach(() => {
+    global.window = originalWindow;
+  });
+
+  it('should return config values and call optOutOfStatic(true)', async () => {
+    const values = {
+      API_URL: 'https://api.example.com',
+    };
+
+    const { getPublicEnvAsync } = createPublicEnv(values);
+    const env = await getPublicEnvAsync();
+
+    expect(env).toEqual(values);
+    expect(optOutOfStatic).toHaveBeenCalledWith(true);
+  });
+
+  it('should throw error when called on client side', async () => {
+    // @ts-ignore
+    global.window = {} as any;
+
+    const { getPublicEnvAsync } = createPublicEnv({ API_URL: 'test' });
+
+    await expect(getPublicEnvAsync()).rejects.toThrow(
+      "This wasn't supposed to happen. This file should only be resolved on the server.",
+    );
+  });
+});
+
 describe('PublicEnv', () => {
   const useServerInsertedHTML = nextNavigation.useServerInsertedHTML;
 
@@ -135,14 +177,19 @@ describe('PublicEnv', () => {
     vi.clearAllMocks();
   });
 
-  it('should flush script tag with serialized config', () => {
+  it('should flush script tag with serialized config', async () => {
     const values = {
       API_URL: 'https://api.example.com',
       PORT: 3000,
     };
 
     const { PublicEnv } = createPublicEnv(values);
-    render(<PublicEnv />);
+    const PublicEnvInternalElement = await PublicEnv({});
+    // @ts-ignore
+    const FlushConfigElement = await PublicEnvInternalElement.type(
+      PublicEnvInternalElement.props,
+    );
+    render(FlushConfigElement);
 
     expect(useServerInsertedHTML).toHaveBeenCalled();
 
@@ -155,14 +202,19 @@ describe('PublicEnv', () => {
     );
   });
 
-  it('should flush script tag with serialized config only once', () => {
+  it('should flush script tag with serialized config only once', async () => {
     const values = {
       API_URL: 'https://api.example.com',
       PORT: 3000,
     };
 
     const { PublicEnv } = createPublicEnv(values);
-    const { rerender } = render(<PublicEnv />);
+    const PublicEnvInternalElement = await PublicEnv({});
+    // @ts-ignore
+    const FlushConfigElement = await PublicEnvInternalElement.type(
+      PublicEnvInternalElement.props,
+    );
+    const { rerender } = render(FlushConfigElement);
 
     expect(useServerInsertedHTML).toHaveBeenCalled();
 
@@ -174,7 +226,12 @@ describe('PublicEnv', () => {
       `(function i(n){window.__NEXT_PUBLIC_ENV||Object.defineProperty(window,"__NEXT_PUBLIC_ENV",{value:Object.freeze(n),enumerable:!0})})(${JSON.stringify(values)});`,
     );
 
-    rerender(<PublicEnv />);
+    const PublicEnvInternalElement2 = await PublicEnv({});
+    // @ts-ignore
+    const FlushConfigElement2 = await PublicEnvInternalElement2.type(
+      PublicEnvInternalElement2.props,
+    );
+    rerender(FlushConfigElement2);
 
     const callback2 = (useServerInsertedHTML as Mock).mock.calls[0][0];
     const scriptElement2 = callback2();
@@ -182,7 +239,7 @@ describe('PublicEnv', () => {
     expect(scriptElement2).toBe(null);
   });
 
-  it('should serialize validated and transformed values', () => {
+  it('should serialize validated and transformed values', async () => {
     const values = {
       NODE_ENV: 'production',
       PORT: '8080',
@@ -200,7 +257,12 @@ describe('PublicEnv', () => {
       }),
     });
 
-    render(<PublicEnv />);
+    const PublicEnvInternalElement = await PublicEnv({});
+    // @ts-ignore
+    const FlushConfigElement = await PublicEnvInternalElement.type(
+      PublicEnvInternalElement.props,
+    );
+    render(FlushConfigElement);
 
     const callback = (useServerInsertedHTML as Mock).mock.calls[0][0];
     const scriptElement = callback();
@@ -216,9 +278,14 @@ describe('PublicEnv', () => {
     );
   });
 
-  it('should handle empty config', () => {
+  it('should handle empty config', async () => {
     const { PublicEnv } = createPublicEnv({});
-    render(<PublicEnv />);
+    const PublicEnvInternalElement = await PublicEnv({});
+    // @ts-ignore
+    const FlushConfigElement = await PublicEnvInternalElement.type(
+      PublicEnvInternalElement.props,
+    );
+    render(FlushConfigElement);
 
     const callback = (useServerInsertedHTML as Mock).mock.calls[0][0];
     const scriptElement = callback();
@@ -228,14 +295,19 @@ describe('PublicEnv', () => {
     );
   });
 
-  it('should pass nonce to script tag', () => {
+  it('should pass nonce to script tag', async () => {
     const values = {
       API_URL: 'https://api.example.com',
     };
     const nonce = 'test-nonce';
 
     const { PublicEnv } = createPublicEnv(values);
-    render(<PublicEnv nonce={nonce} />);
+    const PublicEnvInternalElement = await PublicEnv({ nonce });
+    //@ts-ignore
+    const FlushConfigElement = await PublicEnvInternalElement.type(
+      PublicEnvInternalElement.props,
+    );
+    render(FlushConfigElement);
 
     const callback = (useServerInsertedHTML as Mock).mock.calls[0][0];
     const scriptElement = callback();

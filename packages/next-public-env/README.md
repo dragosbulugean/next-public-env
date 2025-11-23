@@ -137,6 +137,52 @@ For specific use cases, you can override this behavior using the
 `noStore()` call and take full control of your routes' rendering behavior.
 
 
+
+## Cache Components Support
+
+Next.js Cache Components (enabled via `cacheComponents: true` in
+`next.config.js`) prerender routes into a static HTML shell by default. This
+means that environment variables are read at build time, which defeats the
+purpose of `next-public-env`.
+
+To ensure your environment variables are read at runtime, you must opt-out of
+the static shell by making your component dynamic. You can do this by using any
+[runtime API](https://nextjs.org/docs/app/getting-started/cache-components#runtime-data)(like
+`headers()`, `cookies()`, etc.) or by using the `getPublicEnvAsync()` function
+provided by this library which automatically calls `await connection()` to
+opt-out of the static shell.
+
+### Using `getPublicEnvAsync()`
+
+`getPublicEnvAsync()` is a helper function that automatically calls `await
+connection()` to opt-out of the static shell and returns your environment
+variables.
+
+**Important:** Components using `getPublicEnvAsync()` (or any runtime API)
+should be wrapped in a `<Suspense>` boundary to allow the rest of the page to be
+prerendered.
+
+```tsx
+import { Suspense } from 'react';
+import { getPublicEnvAsync } from './public-env';
+
+async function EnvComponent() {
+  const env = await getPublicEnvAsync();
+  return <div>API URL: {env.API_URL}</div>;
+}
+
+export default function Page() {
+  return (
+    <div>
+      <h1>My Page</h1>
+      <Suspense fallback={<div>Loading env...</div>}>
+        <EnvComponent />
+      </Suspense>
+    </div>
+  );
+}
+```
+
 ## API Reference
 
 ### `createPublicEnv(publicEnv, options)`
@@ -166,4 +212,5 @@ The function returns an object containing the `getPublicEnv` function and the
 | Property      | Type                | Description                                                                                                                             |
 | :------------ | :------------------ | :-------------------------------------------------------------------------------------------------------------------------------------- |
 | `getPublicEnv`| `() => EnvObject`   | A function that returns your public environment variables. The return type is inferred from your `publicEnv` object and Zod schema.      |
+| `getPublicEnvAsync`| `() => Promise<EnvObject>` | An async function that returns your public environment variables and opts-out of static rendering by calling `await connection()`. |
 | `PublicEnv`   | `React.Component`   | A React component that must be rendered in your root layout to inject the environment variables for client-side access.               |

@@ -1,11 +1,11 @@
 {
-  "name": "next-16-standalone",
+  "name": "next-16-cache-components",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "cp -rf .next/static .next/standalone/apps/next-16-standalone/.next/ && HOSTNAME=localhost PORT=3003 node .next/standalone/apps/next-16-standalone/server.js"
+    "start": "next start --port 3004"
   },
   "dependencies": {
     "next": "^16.0.3",
