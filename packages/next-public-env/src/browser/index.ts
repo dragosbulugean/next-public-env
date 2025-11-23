@@ -10,6 +10,12 @@ export function createPublicEnv() {
       return window.__NEXT_PUBLIC_ENV || {};
     },
 
+    async getPublicEnvAsync() {
+      throw new Error(
+        'getPublicEnvAsync is not supported on the client. Use getPublicEnv instead.',
+      );
+    },
+
     PublicEnv() {
       return null;
     },
