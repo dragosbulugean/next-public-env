@@ -1,5 +1,11 @@
 # next-public-env
 
+## 1.1.0
+
+### Minor Changes
+
+- [#12](https://github.com/alizeait/next-public-env/pull/12) [`2c89b64`](https://github.com/alizeait/next-public-env/commit/2c89b643601cf88ba66a1f8498a3caa63174ae6e) Thanks [@alizeait](https://github.com/alizeait)! - Add support for Next.js cache components. Use `getPublicEnvAsync` to opt out of static rendering for certain components
+
 ## 1.0.0
 
 ### Major Changes
