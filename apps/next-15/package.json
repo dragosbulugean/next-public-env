@@ -8,8 +8,8 @@
     "start": "next start --port 3001"
   },
   "dependencies": {
+    "@archbee/next-public-env": "workspace:*",
     "next": "^15.0.0",
-    "next-public-env": "workspace:*",
     "react": "19.2.0",
     "react-dom": "19.2.0"
   },

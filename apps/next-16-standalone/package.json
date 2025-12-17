@@ -8,8 +8,8 @@
     "start": "cp -rf .next/static .next/standalone/apps/next-16-standalone/.next/ && HOSTNAME=localhost PORT=3003 node .next/standalone/apps/next-16-standalone/server.js"
   },
   "dependencies": {
+    "@archbee/next-public-env": "workspace:*",
     "next": "^16.0.3",
-    "next-public-env": "workspace:*",
     "react": "19.2.0",
     "react-dom": "19.2.0"
   },

@@ -315,3 +315,77 @@ describe('PublicEnv', () => {
     expect(scriptElement.props.nonce).toBe(nonce);
   });
 });
+
+describe('PublicEnvScript', () => {
+  it('should render script tag with serialized config', () => {
+    const values = {
+      API_URL: 'https://api.example.com',
+      PORT: 3000,
+    };
+
+    const { PublicEnvScript } = createPublicEnv(values);
+    const { container } = render(<PublicEnvScript />);
+
+    const script = container.querySelector('script');
+    expect(script).not.toBeNull();
+    expect(script?.getAttribute('type')).toBe('text/javascript');
+    expect(script?.innerHTML).toBe(
+      `(function i(n){window.__NEXT_PUBLIC_ENV||Object.defineProperty(window,"__NEXT_PUBLIC_ENV",{value:Object.freeze(n),enumerable:!0})})(${JSON.stringify(values)});`,
+    );
+  });
+
+  it('should pass nonce to script tag', () => {
+    const values = {
+      API_URL: 'https://api.example.com',
+    };
+    const nonce = 'test-nonce';
+
+    const { PublicEnvScript } = createPublicEnv(values);
+    const { container } = render(<PublicEnvScript nonce={nonce} />);
+
+    const script = container.querySelector('script');
+    expect(script?.getAttribute('nonce')).toBe(nonce);
+  });
+
+  it('should handle empty config', () => {
+    const { PublicEnvScript } = createPublicEnv({});
+    const { container } = render(<PublicEnvScript />);
+
+    const script = container.querySelector('script');
+    expect(script?.innerHTML).toBe(
+      '(function i(n){window.__NEXT_PUBLIC_ENV||Object.defineProperty(window,"__NEXT_PUBLIC_ENV",{value:Object.freeze(n),enumerable:!0})})({});',
+    );
+  });
+
+  it('should serialize validated and transformed values', () => {
+    const values = {
+      NODE_ENV: 'production',
+      PORT: '8080',
+      IS_SECURE: 'true',
+    };
+
+    const { PublicEnvScript } = createPublicEnv(values, {
+      schema: (z) => ({
+        NODE_ENV: z.enum(['development', 'production']),
+        PORT: z.coerce.number(),
+        IS_SECURE: z
+          .string()
+          .transform((val) => val === 'true')
+          .pipe(z.boolean()),
+      }),
+    });
+
+    const { container } = render(<PublicEnvScript />);
+
+    const expectedConfig = {
+      NODE_ENV: 'production',
+      PORT: 8080,
+      IS_SECURE: true,
+    };
+
+    const script = container.querySelector('script');
+    expect(script?.innerHTML).toBe(
+      `(function i(n){window.__NEXT_PUBLIC_ENV||Object.defineProperty(window,"__NEXT_PUBLIC_ENV",{value:Object.freeze(n),enumerable:!0})})(${JSON.stringify(expectedConfig)});`,
+    );
+  });
+});

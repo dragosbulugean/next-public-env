@@ -1,4 +1,4 @@
-import { createPublicEnv } from 'next-public-env';
+import { createPublicEnv } from '@archbee/next-public-env';
 
 export const { PublicEnv, getPublicEnv } = createPublicEnv(
   {

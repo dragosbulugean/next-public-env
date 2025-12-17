@@ -1,9 +1,12 @@
 {
-  "name": "next-public-env",
+  "name": "@archbee/next-public-env",
   "description": "Manage type-safe runtime environment variables in Next.js for both the server and the client.",
-  "version": "1.1.0",
-  "author": "alizeait",
+  "version": "1.1.5",
+  "author": "dragosbulugean",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "types": "./dist/server/index.d.ts",
   "exports": {
@@ -58,12 +61,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/alizeait/next-public-env.git"
+    "url": "git+https://github.com/dragosbulugean/next-public-env.git"
   },
   "bugs": {
-    "url": "https://github.com/alizeait/next-public-env/issues"
+    "url": "https://github.com/dragosbulugean/next-public-env/issues"
   },
-  "homepage": "https://github.com/alizeait/next-public-env#readme",
+  "homepage": "https://github.com/dragosbulugean/next-public-env#readme",
   "keywords": [
     "nextjs",
     "react",

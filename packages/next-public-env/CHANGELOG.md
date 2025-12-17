@@ -4,22 +4,22 @@
 
 ### Minor Changes
 
-- [#12](https://github.com/alizeait/next-public-env/pull/12) [`2c89b64`](https://github.com/alizeait/next-public-env/commit/2c89b643601cf88ba66a1f8498a3caa63174ae6e) Thanks [@alizeait](https://github.com/alizeait)! - Add support for Next.js cache components. Use `getPublicEnvAsync` to opt out of static rendering for certain components
+- [#12](https://github.com/dragosbulugean/next-public-env/pull/12) [`2c89b64`](https://github.com/dragosbulugean/next-public-env/commit/2c89b643601cf88ba66a1f8498a3caa63174ae6e) Thanks [@dragosbulugean](https://github.com/dragosbulugean)! - Add support for Next.js cache components. Use `getPublicEnvAsync` to opt out of static rendering for certain components
 
 ## 1.0.0
 
 ### Major Changes
 
-- [#5](https://github.com/alizeait/next-public-env/pull/5) [`ec73e83`](https://github.com/alizeait/next-public-env/commit/ec73e833f17e81fc10c842409b5fb3772bea8dea) Thanks [@alizeait](https://github.com/alizeait)! - Release major version
+- [#5](https://github.com/dragosbulugean/next-public-env/pull/5) [`ec73e83`](https://github.com/dragosbulugean/next-public-env/commit/ec73e833f17e81fc10c842409b5fb3772bea8dea) Thanks [@dragosbulugean](https://github.com/dragosbulugean)! - Release major version
 
 ## 0.2.0
 
 ### Minor Changes
 
-- [#3](https://github.com/alizeait/next-public-env/pull/3) [`46537d5`](https://github.com/alizeait/next-public-env/commit/46537d5b8db1c2e34135ccc43958692c0d511341) Thanks [@alizeait](https://github.com/alizeait)! - Freeze client-side object and add `nonce` to `PublicEnv` script
+- [#3](https://github.com/dragosbulugean/next-public-env/pull/3) [`46537d5`](https://github.com/dragosbulugean/next-public-env/commit/46537d5b8db1c2e34135ccc43958692c0d511341) Thanks [@dragosbulugean](https://github.com/dragosbulugean)! - Freeze client-side object and add `nonce` to `PublicEnv` script
 
 ## 0.1.0
 
 ### Minor Changes
 
-- [#1](https://github.com/alizeait/next-public-env/pull/1) [`23ad7b4`](https://github.com/alizeait/next-public-env/commit/23ad7b42ba51656b6137f63856587ff31be82191) Thanks [@alizeait](https://github.com/alizeait)! - Release initial version of `next-public-env`
+- [#1](https://github.com/dragosbulugean/next-public-env/pull/1) [`23ad7b4`](https://github.com/dragosbulugean/next-public-env/commit/23ad7b42ba51656b6137f63856587ff31be82191) Thanks [@dragosbulugean](https://github.com/dragosbulugean)! - Release initial version of `next-public-env`

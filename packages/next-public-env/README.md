@@ -1,6 +1,6 @@
 # Next.js Public Runtime Environment
 
-`next-public-env` is a lightweight utility that dynamically injects environment
+`@archbee/next-public-env` is a lightweight utility that dynamically injects environment
 variables into your Next.js application at *runtime* instead of just at build time.
 
 ## The Problem
@@ -26,13 +26,13 @@ principle and creates unnecessary complexity in your deployment pipeline.
 Install it via your preferred package manager:
 
 ```bash
-yarn add next-public-env
+yarn add @archbee/next-public-env
 ```
 ```bash
-pnpm add next-public-env
+pnpm add @archbee/next-public-env
 ```
 ```bash
-npm install next-public-env
+npm install @archbee/next-public-env
 ```
 
 ## Getting Started
@@ -45,7 +45,7 @@ Create a file to configure your public environment variables (e.g.,
 **Basic (Type-Safe):**
 ```ts
 // public-env.ts
-import { createPublicEnv } from 'next-public-env';
+import { createPublicEnv } from '@archbee/next-public-env';
 
 export const { getPublicEnv, PublicEnv } = createPublicEnv({
   NODE_ENV: process.env.NODE_ENV,
@@ -57,7 +57,7 @@ export const { getPublicEnv, PublicEnv } = createPublicEnv({
 **With Zod Validation (Recommended):**
 ```ts
 // public-env.ts
-import { createPublicEnv } from 'next-public-env';
+import { createPublicEnv } from '@archbee/next-public-env';
 
 export const { getPublicEnv, PublicEnv } = createPublicEnv(
   {

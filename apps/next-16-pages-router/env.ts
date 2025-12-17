@@ -1,6 +1,6 @@
 import { createPublicEnv } from '@archbee/next-public-env';
 
-export const { PublicEnv, getPublicEnv, getPublicEnvAsync } = createPublicEnv(
+export const { PublicEnvScript, getPublicEnv } = createPublicEnv(
   {
     NEXT_PUBLIC_APP_NAME: process.env.NEXT_PUBLIC_APP_NAME,
     NEXT_PUBLIC_APP_VERSION: process.env.NEXT_PUBLIC_APP_VERSION,

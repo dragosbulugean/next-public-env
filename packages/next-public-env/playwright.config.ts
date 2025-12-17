@@ -51,6 +51,10 @@ export default defineConfig({
       name: 'next-16-cache-components',
       use: { ...devices['Desktop Chrome'], baseURL: 'http://localhost:3004' },
     },
+    {
+      name: 'next-16-pages-router',
+      use: { ...devices['Desktop Chrome'], baseURL: 'http://localhost:3005' },
+    },
   ],
 
   /* Run your local dev server before starting the tests */
@@ -90,6 +94,14 @@ export default defineConfig({
     {
       command: 'yarn workspace next-16-cache-components run start',
       port: 3004,
+      reuseExistingServer: !process.env.CI,
+      env,
+      stderr: 'pipe',
+      stdout: 'pipe',
+    },
+    {
+      command: 'yarn workspace next-16-pages-router run start',
+      port: 3005,
       reuseExistingServer: !process.env.CI,
       env,
       stderr: 'pipe',
