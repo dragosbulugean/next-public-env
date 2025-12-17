@@ -33,19 +33,19 @@ jobs:
         run: yarn format:check
 
       - name: Type Check
-        run: yarn workspace next-public-env run check-types
+        run: yarn workspace @archbee/next-public-env run check-types
 
       - name: Test
-        run: yarn workspace next-public-env run test
+        run: yarn workspace @archbee/next-public-env run test
 
       - name: Build next-public-env
-        run: yarn workspace next-public-env run build
+        run: yarn workspace @archbee/next-public-env run build
 
       - name: Build apps
         run: yarn build:apps
 
       - name: Install Playwright Browsers
-        run: yarn workspace next-public-env run playwright install --with-deps
+        run: yarn workspace @archbee/next-public-env run playwright install --with-deps
 
       - name: Test E2E
-        run: yarn workspace next-public-env run test:e2e
+        run: yarn workspace @archbee/next-public-env run test:e2e
