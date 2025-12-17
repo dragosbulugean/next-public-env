@@ -1,4 +1,3 @@
 export default {
-  cacheComponents: true,
   telemetry: false,
 };
